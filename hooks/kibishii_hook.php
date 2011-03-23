@@ -78,6 +78,7 @@ class kibishii_hook {
 	}
 
 	function _glean_roles($user_id) {
+		$roles = array();
 		if ($this->CI->config->item('kibishii_roles_from_class')) {
 			$authorization_class = $this->CI->config->item('kibishii_roles_class');
 			$authorization_method = $this->CI->config->item('kibishii_roles_method');
@@ -89,17 +90,23 @@ class kibishii_hook {
 	
 			$auth_object = new $authorization_class;
 			$roles = $auth_object->$authorization_method($user_id);
-			return $roles;
 		}
 		if ($this->CI->config->item('kibishii_roles_from_session')) {
 			// TODO get it from the session?
-			
+			$this->CI->load->library('session');
+			$field = $this->CI->config->item('kibishii_roles_session_field');
+			$this->_dump($field, 'field');
+			$roles = $this->CI->session->userdata($field);
+			if (!is_array($roles)) {
+				$roles = array($roles);
+			}
 		}
 		if ($this->CI->config->item('kibishii_roles_from_config')) {
 			$config_roles = $this->CI->config->item('kibishii_mock_roles') ;
 			return (isset($config_roles[$user_id])) ? $config_roles[$user_id] : array();
 		}
-		return array();
+		$this->_dump($roles, 'gleaned roles');
+		return $roles;
 	}
 
 	function _glean_id() {
@@ -134,8 +141,13 @@ class kibishii_hook {
 		if ($this->test_mode) {
 			echo '<pre>';
 			$title = ($title != '') ? ': '.$title : '';
-			echo "[kibishii_hook$title]: ".$msg;
-			//var_dump($msg);
+			echo "[kibishii_hook$title]";
+			if (!is_array($msg)) {
+				echo ": ".$msg;
+			} else {
+				echo "\n";
+				var_dump($msg);
+			}
 			echo '</pre>';
 		}
 	}
