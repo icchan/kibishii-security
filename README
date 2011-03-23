@@ -1,0 +1,6 @@
+:: kibishii security ::
+Kibishii is a framework for role-based url security in CodeIgniter.
+It is implemented as a post controller constructor hook.
+It allows separation of application code and 
+It is not an Authentication library, It is designed to work with 
+other authentication libraries such as Tank Auth or Ion Auth.
