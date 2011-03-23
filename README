@@ -1,6 +1,35 @@
-:: kibishii security ::
+:: Kibishii Security ::
+
+# About
 Kibishii is a framework for role-based url security in CodeIgniter.
 It is implemented as a post controller constructor hook.
 It allows separation of application code and 
 It is not an Authentication library, It is designed to work with 
 other authentication libraries such as Tank Auth or Ion Auth.
+
+# Roadmap
+ - build support for ion auth, a3m, and more..
+ - build authorization provider for SQL
+ 
+ 
+
+# Settings
+- Tank Auth (http://www.konyukhov.com/soft/tank_auth/)
+$config['kibishii_login_url']	= 'auth/login';
+
+AND (to get username from session)
+
+$config['kibishii_get_id_from_session'] = TRUE; 
+$config['kibishii_user_id_session_field'] = 'username';
+
+OR (to get the username from the tank_auth library)
+
+$config['kibishii_get_id_from_class'] = TRUE;
+$config['kibishii_authentication_class']	= 'tank_auth';
+$config['kibishii_authentication_method']	= 'get_username';
+$config['kibishii_authentication_filename']	= 'libraries/Tank_auth.php';
+
+- Ion Auth
+
+
+- a3m
