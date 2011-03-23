@@ -9,12 +9,14 @@ other authentication libraries such as Tank Auth or Ion Auth.
 
 # Roadmap
  - build support for ion auth, a3m, and more..
- - build authorization provider for SQL
+ - build authorization provider for SQL (for libraries which dont have it)
  
  
 
 # Settings
 - Tank Auth (http://www.konyukhov.com/soft/tank_auth/)
+For Authentication only (must provide your own authorization)
+
 $config['kibishii_login_url']	= 'auth/login';
 
 AND (to get username from session)
@@ -29,7 +31,18 @@ $config['kibishii_authentication_class']	= 'tank_auth';
 $config['kibishii_authentication_method']	= 'get_username';
 $config['kibishii_authentication_filename']	= 'libraries/Tank_auth.php';
 
-- Ion Auth
+- Ion Auth (http://github.com/benedmunds/CodeIgniter-Ion-Auth)
+For Authentication and Authorization (via groups)
+
+$config['kibishii_login_url']	= 'auth/login';
+$config['kibishii_get_id_from_session'] = TRUE; 
+$config['kibishii_user_id_session_field'] = 'email';
+
+$config['kibishii_roles_from_session'] = TRUE;
+$config['kibishii_roles_session_field'] = 'group';
+
+note: the default groups are 'admin' and 'members'
+they should be used in your acl in lower case.
 
 
 - a3m
