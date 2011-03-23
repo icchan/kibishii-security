@@ -13,27 +13,37 @@ $config['kibishii_acl']	= array(
 							'/^_test2\/secure/' => 'ROLE_USER',
 							);
 
-// The view to load if access is denied
-$config['kibishii_test_mode']	= TRUE;
+/*
+ *  Set this to TRUE to enter test mode.
+ * 
+ *  In test mode, the decision process will be display on the screen.
+ *  And the result page will not be display (whether permission is grant or not)
+ */
+$config['kibishii_test_mode']	= FALSE;
+
+// turn off everything
+$config['kibishii_disabled']	= FALSE;
 
 
-// The view to load if access is denied
+
+// The url of the login page 
+// This overrides any rules in the ACL and make this url always unprotected.
 $config['kibishii_login_url']	= 'auth/login';
 
-// set to true if you want a 404 on access denied
+// set to true if you want a 404 instead of error when access is denied.
 $config['kibishii_denied_show_404']	= FALSE;
 
 // The view to load if access is denied
-$config['kibishii_denied_view']	= 'denied.php';
+$config['kibishii_denied_view']	= 'denied';
 
 
 
 /**************************************************
  *   Authentication Config
  **************************************************/
-$config['kibishii_get_id_from_config'] = TRUE;
+$config['kibishii_get_id_from_config'] = FALSE;
 $config['kibishii_get_id_from_session'] = FALSE; 
-$config['kibishii_get_id_from_class'] = FALSE;
+$config['kibishii_get_id_from_class'] = TRUE;
 
 // mock user id (used when you set $config['kibishii_get_id_from_config'] = TRUE;)
 $config['kibishii_mock_user_id'] = 'user33';
@@ -47,7 +57,7 @@ $config['kibishii_mock_user_id'] = 'user33';
  *  Ion_auth: 'email'
  * 
  */
-$config['kibishii_user_id_session_field'] = 'user_id';
+$config['kibishii_user_id_session_field'] = 'username';
  
 /*
 * ## Configuration of your Authentication ##
@@ -61,9 +71,9 @@ $config['kibishii_user_id_session_field'] = 'user_id';
 * 									 (this is not needed if you autoload your class or 
 * 									  load your class in the controller's constructor)
 */
-$config['kibishii_authentication_class']	= 'kantan_auth';
-$config['kibishii_authentication_method']	= 'get_id';
-$config['kibishii_authentication_filename']	= 'libraries/kantan_auth.php';
+$config['kibishii_authentication_class']	= 'tank_auth';
+$config['kibishii_authentication_method']	= 'get_username';
+$config['kibishii_authentication_filename']	= 'libraries/Tank_auth.php';
 
 
 /**************************************************

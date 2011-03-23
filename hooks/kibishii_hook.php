@@ -3,7 +3,6 @@
 class kibishii_hook {
 	var $CI;
 	var $TAG = '[kibishii_hook] ';
-	var $screen_debug = TRUE;
 	var $log_debug = FALSE;
 	var $test_mode = FALSE;
 
@@ -12,16 +11,24 @@ class kibishii_hook {
 		$this->CI =& get_instance();
 		
 		$this->CI->config->load('kibishii');
-		$this->test_mode = $this->CI->config->item('kibishii_test_mode'); 
+		
+		if (!$this->CI->config->item('kibishii_disabled')) {
+			$this->test_mode = $this->CI->config->item('kibishii_test_mode'); 
+			$uri = $this->CI->uri->uri_string;
+			if ($uri !== $this->CI->config->item('kibishii_login_url')) {
+	
+				$has_access = $this->_has_access($uri);
+				$dekiru =  $has_access ? 'YES': 'NO';
+				$this->_dump("i can haz access to [$uri] ? $dekiru",'verdict');
+		
+				if ($this->test_mode) {
+					exit();
+				}
 
-
-
-		$uri = $this->CI->uri->uri_string;
-		$dekiru = $this->_has_access($uri) ? 'YES': 'NO';
-		$this->_dump("i can haz access to [$uri] ? $dekiru","verdict");
-
-		if ($this->test_mode) {
-			exit();
+				if (!$has_access) {
+					$this->_access_denied();
+				}
+			}
 		}
 	}
 	function _has_access($uri) {
@@ -59,12 +66,14 @@ class kibishii_hook {
 		$this->_access_denied();
 	}
 	function _access_denied() {
-		$denied_page = $this->CI->config->item('kibishii_denied_view');
-		if (isset($denied_page) && $denied_page != '') {
-			$this->CI->load->view($denied_page);
-		} else {
-			echo "<h1>## ACCESS DENIED ##</h1>";
+		$this->_dump('displaying access denied page','denied');
+		//$denied_page = $this->CI->config->item('kibishii_denied_view');
+		
+		if ($this->CI->config->item('kibishii_denied_show_404')) {
+			show_404();
 		}
+
+		show_error('You dont have permission to view this page.', 403 );
 		exit();
 	}
 
@@ -98,25 +107,31 @@ class kibishii_hook {
 				return $this->CI->config->item('kibishii_mock_user_id');
 			}
 
-			$authentication_class = $this->CI->config->item('kibishii_authentication_class');
-			$authentication_method = $this->CI->config->item('kibishii_authentication_method');
-			$authentication_class_file = $this->CI->config->item('kibishii_authentication_filename');
-			
-			if ( ! class_exists($authentication_class)) {
-				require_once(APPPATH.$authentication_class_file);
-				log_message('debug',$TAG.'loaded class: ['.APPPATH.$authentication_class_file.']');
+			if ($this->CI->config->item('kibishii_get_id_from_session')) {
+				$this->CI->load->library('session');
+				$field = $this->CI->config->item('kibishii_user_id_session_field');
+				$this->_dump($field, 'field');
+				$user_id = $this->CI->session->userdata($field);
 			}
-	
-			$auth_object = new $authentication_class;
-			$user_id = $auth_object->$authentication_method();
-			log_message('debug',$TAG.'gleaned id: ['.$user_id.']');	
-			return $user_id;
-		
-		return '';
+
+			if ($this->CI->config->item('kibishii_get_id_from_class')) {
+				$authentication_class = $this->CI->config->item('kibishii_authentication_class');
+				$authentication_method = $this->CI->config->item('kibishii_authentication_method');
+				$authentication_class_file = $this->CI->config->item('kibishii_authentication_filename');
+				
+				if ( ! class_exists($authentication_class)) {
+					require_once(APPPATH.$authentication_class_file);
+					log_message('debug',$TAG.'loaded class: ['.APPPATH.$authentication_class_file.']');
+				}
+				$auth_object = new $authentication_class;
+				$user_id = $auth_object->$authentication_method();
+			}
+		log_message('debug',$this->TAG.'gleaned id: ['.$user_id.']');
+		return $user_id;
 	}
 
 	function _dump($msg, $title = '') {
-		if ($this->screen_debug) {
+		if ($this->test_mode) {
 			echo '<pre>';
 			$title = ($title != '') ? ': '.$title : '';
 			echo "[kibishii_hook$title]: ".$msg;
