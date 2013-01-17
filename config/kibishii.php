@@ -31,11 +31,15 @@ $config['kibishii_disabled']	= FALSE;
 $config['kibishii_login_url']	= 'auth/login';
 
 // set to true if you want a 404 instead of error when access is denied.
-$config['kibishii_denied_show_404']	= FALSE;
+$config['kibishii_denied_show_404'] = FALSE;
+// set to true if you want to redirect instead of error when access is denied. e.g. go to login screen or dashboard
+
+$config['kibishii_denied_redirect'] = TRUE;
+ // the url to redirect to if access is denied
+$config['kibishii_denied_redirect_url'] = 'dashboard';
 
 // The view to load if access is denied
 $config['kibishii_denied_view']	= 'denied';
-
 
 
 /**************************************************

@@ -11,7 +11,9 @@ class kibishii_ion {
 		$auth_object = new $authorization_class;
 		$roles = $auth_object->$authorization_method();
 		$role_names = array();
-		foreach ($roles as &$role) {
+		// Break Down Roles Array for Ion Auth 2 Compatability
+		$roles_result = $roles->result();
+		foreach ($roles_result as &$role) {
 		    $role_names[] = $role->name;
 		}			
 		return $role_names;
