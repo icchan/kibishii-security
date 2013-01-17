@@ -70,6 +70,10 @@ class kibishii_hook {
 		if ($this->CI->config->item('kibishii_denied_show_404')) {
 			show_404();
 		}
+		
+		if ($this->CI->config->item('kibishii_denied_redirect')) {
+			redirect($this->CI->config->item('kibishii_denied_redirect_url'));
+		}
 
 		show_error('You dont have permission to view this page.', 403 );
 		exit();
